@@ -1,0 +1,8 @@
+/* Khovanov Laplacian calculation
+ * test
+ */
+get_kho_lap(datapos, i, j) =
+{
+	return(get_differential(datapos, i-1, j)*mattranspose(get_differential(datapos, i-1, j))
+	+mattranspose(get_differential(datapos, i, j))*get_differential(datapos, i, j))
+}

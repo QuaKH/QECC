@@ -80,7 +80,7 @@ def get_d_all(k, n):
             dis = get_distance(cohomology, homology)
 
             # the sequence is 1.dis 2.log qubit 3.phys qubit 4.sanity check ratio
-            with open("./output/knot_"+ str(k) +"_" + str(n) + "/" + str(i) + "_" + str(j), "w") as f:
+            with open("./output/knot_"+ str(k) +"_" + str(n) + "_new/" + str(i) + "_" + str(j), "w") as f:
                 f.write(str(dis))
                 f.write("\n")
                 f.write(str(logical_qubit_num))
@@ -243,31 +243,47 @@ def get_d(k, n, i, j):
 
 # L1, L2 are matrices in list forms; will perform L1 / L2 (quotient)
 def get_homology(L1, L2):
-    list1 = L1.copy()
-    list2 = L2.copy()
-    print(list1)
+    # list1 = L1.copy()
+    # list2 = L2.copy()
+    print(L1)
     print()
-    print(list2)
+    print(L2)
     print()
-    if len(list1) == len(list2):
+
+    if len(L1) == len(L2):
         return []
 
-    while len(list2) > 0:
-        for i in range(len(list2)):
-            for j in range(len(list1)):
-                if list2[i] == list1[j]:
-                    list2.pop(i)
-                    list1.pop(j)
+    print("here1")
+
+    # new_list = [x for x in L1 if x not in L2]
+
+    while len(L2) > 0:
+        for i in range(len(L2)):
+            for j in range(len(L1)):
+                if L2[i] == L1[j]:
+                    L2.pop(i)
+                    L1.pop(j)
                     break
             break
 
-    return list1
+    # index = 0
+    # for i in range(len(L2)):
+    #     for j in range(len(L1) - index):
+    #         if L2[i] == L1[j + index]:
+    #             L1.pop(j + index)
+    #             index = j + index
+    #             break
+    #     break
+
+    print("here2")
+    return L1
 
 
 # ch, h are lists; ch is list of all elements in cohomology H^1, h H_1
 # returns dis, the min number of bitwise 1's from selecting an element from ch and h
 def get_distance(ch, h):
-    dis = -1
+    # dis = -1
+    dis = infinity
     for i in range(len(ch)):
         for j in range(len(h)):
             count = 0
@@ -275,12 +291,16 @@ def get_distance(ch, h):
                 if ch[i][a] == 1 or h[j][a] == 1:
                     count += 1
 
-            if i == 0 and j == 0:
+            # if i == 0 and j == 0:
+            #     dis = count
+            # elif dis > count > 0:
+            #     dis = count
+            if dis > count:
                 dis = count
-            elif dis > count > 0:
-                dis = count
-    if dis == -1:
-        dis = 0
+    # if dis == -1:
+    #     dis = 0
+    if dis == infinity:
+         dis = 0
     return dis
 
 # transforms matrix string from pari/gp to numpy array

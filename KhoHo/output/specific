@@ -1,6 +1,6 @@
-knot_5_1/-5_-11
-distance: 5
-logical qubit number: 1
-physical qubit number: 20
-ratio: 0.05
+knot_4_1/0_-2
+distance: +Infinity
+logical qubit number: 0
+physical qubit number: 4
+ratio: 0.0
 Finite Field of size 2

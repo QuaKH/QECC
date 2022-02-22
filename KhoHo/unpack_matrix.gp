@@ -209,7 +209,7 @@ write_differential_dense_to_file(crossings, index, datapos, x, y) = {
 /**
  * compute all differentials of specified knot (given the pdcode) and write to file
  */
-compute_knot_differential_pd() = {
+compute_knot_differential_pdtest() = {
 	
 	local(x,y);
 
@@ -221,6 +221,41 @@ compute_knot_differential_pd() = {
 
 	write (
 			Str("./differentials/pdcode_example/bound"),
+
+			Str(DStore[1].iLow, " ", DStore[1].iHigh - 1, " ", DStore[1].jLow, " ", DStore[1].jHigh)
+
+		);
+
+	for (x = DStore[1].iLow,
+		DStore[1].iHigh - 1,
+		for (y = DStore[1].jLow,
+			DStore[1].jHigh,
+
+			write_differential_pdtest_to_file(1, x, y);
+
+		);
+	);
+
+	return 1;
+}
+
+
+
+/**
+ * compute all differentials of specified knot (given the pdcode) and write to file
+ */
+compute_knot_differential_pd(strfile) = {
+	
+	local(x,y);
+
+	pdcode = read(strfile);
+
+	init_diagr(pdcode,test,1);
+	
+	assignDmatrices(1);
+
+	write (
+			Str("./differentials_pd/pdcode_1/bound"),
 
 			Str(DStore[1].iLow, " ", DStore[1].iHigh - 1, " ", DStore[1].jLow, " ", DStore[1].jHigh)
 
@@ -244,7 +279,7 @@ compute_knot_differential_pd() = {
 /**
  * fetch differential for loaded knot generated from pdcode (at datapos), write to file
  */
-write_differential_pd_to_file(datapos, x, y) = {
+write_differential_pdtest_to_file(datapos, x, y) = {
 
 	local(entry, row, col, val, i, j);
 		
@@ -256,6 +291,32 @@ write_differential_pd_to_file(datapos, x, y) = {
 		/* write differential matrix to file in sparse format */
 		write (
 			Str("./differentials/pdcode_example/",x,"_",y),
+			get_differential(datapos, x, y)
+
+		),
+		
+		return 0;
+	);
+
+	return 1;
+}
+
+
+/**
+ * fetch differential for loaded knot generated from pdcode (at datapos), write to file
+ */
+write_differential_pd_to_file(datapos, x, y) = {
+
+	local(entry, row, col, val, i, j);
+		
+	i = i2m(datapos, x);
+	j = j2m(datapos, y);
+
+	if (length(allmatr[datapos][i,j]) > 0,
+
+		/* write differential matrix to file in sparse format */
+		write (
+			Str("./differentials_pd/pdcode_1/",x,"_",y),
 			get_differential(datapos, x, y)
 
 		),

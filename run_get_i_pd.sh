@@ -12,7 +12,7 @@ mkdir $dir2
 
 cd KhoHo
 pwd
-echo "compute_knot_differential_pd(${1})" | gp -s 120000000 KH unpack_matrix.gp
+echo "compute_knot_differential_pd(${1})" | gp -s 120000000 KhoHo unpack_matrix.gp
 cd ..
 
 cd KhoHo

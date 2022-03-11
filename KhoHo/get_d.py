@@ -394,6 +394,90 @@ def get_d(k, n, i, j):
     return
 
 
+# loop over all of the samples of pretzel knots/links (except for pretzel(0,0,0), which we already excluded)
+def loop_pretzel(xlow, xhigh, ylow, yhigh, zlow, zhigh):
+    for i in range(xlow, xhigh+1):
+        for j in range(ylow, yhigh+1):
+            for k in range(zlow, zhigh+1):
+                if (i != 0 and j != 0 and k != 0):
+                    get_d_pretzel(i, j, k)
+
+
+#get the information of pretzel(x, y, z)
+def get_d_pretzel(x, y, z):
+
+    file_path_bound = "./differentials_pr/pdcode_" + str(x) + "_" + str(y) + "_" + str(z) + "/bound"
+    if os.path.isfile(file_path_bound):
+        text_file = open(file_path_bound, "r")
+        data_bound = text_file.read()
+        text_file.close()
+    else:
+        catch
+
+    i_j_bound = get_bound_i_j(data_bound)
+    print(i_j_bound[0],i_j_bound[1],i_j_bound[2],i_j_bound[3])
+    for i in range(i_j_bound[0], i_j_bound[1] + 1):
+        for j in range(i_j_bound[2], i_j_bound[3] + 1):
+            print(i,j)
+            file_path_0 = "./differentials_pr/pdcode_" + str(x) + "_" + str(y) + "_" + str(z) + "/" + str(i) + "_" + str(j)
+            file_path_1 = "./differentials_pr/pdcode_" + str(x) + "_" + str(y) + "_" + str(z) + "/" + str(i + 1) + "_" + str(j)
+            data0 = ""
+            data1 = ""
+
+            # check if file is present
+            if os.path.isfile(file_path_0):
+                text_file = open(file_path_0, "r")
+                data0 = text_file.read()
+                text_file.close()
+            else:
+                continue
+
+            if os.path.isfile(file_path_1):
+                text_file = open(file_path_1, "r")
+                data1 = text_file.read()
+                text_file.close()
+            else:
+                continue
+
+            z2 = GF(2)
+            #d0, d1 are numpy arrays
+            d0 = better_format(data0)
+            d1 = better_format(data1)
+            d0t = d0.T
+            d1t = d1.T
+
+            d1_mat = matrix(z2,d1)
+            d0_mat = matrix(z2,d0)
+
+            d1t_mat = matrix(z2, d1t)
+            d0t_mat = matrix(z2, d0t)
+
+            d1_list = list(d1_mat.right_kernel())
+            d0_list = list(d0_mat.column_space())
+
+            # logical_qubit_num equals the dimension of cohomology Hij
+            # physical_qubit_num equals the dimension of the corresponding chain group Cij
+            logical_qubit_num = get_dim(d1_mat.right_kernel(), d0_mat.column_space())
+            physical_qubit_num = len(d1[0])
+            cohomology = get_homology(d1_list, d0_list)
+
+            d1t_list = list(d1t_mat.column_space())
+            d0t_list = list(d0t_mat.right_kernel())
+            homology = get_homology(d0t_list, d1t_list)
+
+            dis = get_distance(cohomology, homology)
+
+            # the sequence is 1.dis 2.log qubit 3.phys qubit 4.sanity check ratio
+            with open("./output_pr/pdcode_" + str(x) + "_" + str(y) + "_" + str(z) + "/" + str(i) + "_" + str(j), "w") as f:
+                f.write(str(dis))
+                f.write("\n")
+                f.write(str(logical_qubit_num))
+                f.write("\n")
+                f.write(str(physical_qubit_num))
+                f.write("\n")
+                f.write(str(float(logical_qubit_num / physical_qubit_num)))
+
+
 # L1, L2 are matrices in list forms; will perform L1 / L2 (quotient)
 def get_homology(L1, L2):
     # list1 = L1.copy()
@@ -418,6 +502,12 @@ def get_homology(L1, L2):
                     L1.pop(j)
                     break
             break
+
+    # set1 = set(L1)
+    # set2 = set(L2)
+    # setdif = set1 - set2
+    # return list(setdif)
+        
 
     # index = 0
     # for i in range(len(L2)):

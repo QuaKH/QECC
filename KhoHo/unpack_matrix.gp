@@ -319,7 +319,7 @@ loop_pdcode(strfile) = {
 	for (x = 1, 
 		pdcode_num,
 	
-		pdcode = line[x];
+		pdcode = eval(line[x]);
 		compute_knot_differential_pd_all_(pdcode, x);
 	);
 
@@ -427,6 +427,93 @@ write_differential_pd_all_to_file(datapos, x, y, linei) = {
 		/* write differential matrix to file in sparse format */
 		write (
 			Str("./differentials_pd/pdcode_",linei,"/",x,"_",y),
+			get_differential(datapos, x, y)
+
+		),
+		
+		return 0;
+	);
+
+	return 1;
+}
+
+
+
+
+/**
+ * Generates a number of pretzel knot (link) differentials from their pdcodes and store them into their folders
+ */
+generate_pretzel(xlow, xhigh, ylow, yhigh, zlow, zhigh) = {
+
+	local(x, y, z);
+
+	for (x = xlow, 
+		xhigh,
+		for (y = ylow,
+			yhigh,
+			for (z = zlow,
+				zhigh,
+
+				if ((x != 0) && (y != 0) && (z != 0),
+
+					pdcode = pretzel_diagr([x,y,z]);
+					compute_pretzel_differential_pd_all(pdcode, x, y, z);
+				);
+			);
+		);
+	);
+}
+
+
+
+/**
+ * compute all differentials of specified knot (given the pdcode) and write to file, without the temp_file
+ */
+compute_pretzel_differential_pd_all(pdcode, i, j, k) = {
+	
+	local(x,y);
+
+	init_diagr(pdcode,test,1);
+	
+	assignDmatrices(1);
+
+	write (
+			Str("./differentials_pr/pdcode_",i,"_",j,"_",k,"/bound"),
+
+			Str(DStore[1].iLow, " ", DStore[1].iHigh - 1, " ", DStore[1].jLow, " ", DStore[1].jHigh)
+
+		);
+
+	for (x = DStore[1].iLow,
+		DStore[1].iHigh - 1,
+		for (y = DStore[1].jLow,
+			DStore[1].jHigh,
+
+			write_pretzel_pd_all_to_file(1, x, y, i, j, k);
+
+		);
+	);
+
+	return 1;
+}
+
+
+
+/**
+ * fetch differential for loaded knot generated from pdcode (at datapos), write to file
+ */
+write_pretzel_pd_all_to_file(datapos, x, y, linei, linej, linek) = {
+
+	local(entry, row, col, val, i, j);
+		
+	i = i2m(datapos, x);
+	j = j2m(datapos, y);
+
+	if (length(allmatr[datapos][i,j]) > 0,
+
+		/* write differential matrix to file in sparse format */
+		write (
+			Str("./differentials_pr/pdcode_",linei,"_",linej,"_",linek,"/",x,"_",y),
 			get_differential(datapos, x, y)
 
 		),

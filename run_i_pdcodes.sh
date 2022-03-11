@@ -26,9 +26,11 @@ pwd
 
 echo "loop_pdcode(${1})" | gp -s 120000000 KhoHo unpack_matrix.gp
 
+echo "done"
+
 for i in `eval echo {1..${2}}`
 do
     echo "import get_d; get_d.get_d_pd_all($i)" | sage
-    cd ..
-
 done
+
+cd ..

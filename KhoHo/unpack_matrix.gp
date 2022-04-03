@@ -498,6 +498,40 @@ compute_pretzel_differential_pd_all(pdcode, i, j, k) = {
 }
 
 
+/**
+ * compute all differentials of specified knot (given the pdcode) and write to file, without the temp_file
+ */
+compute_pretzel_differential_pd_all2(i, j, k) = {
+	
+	local(x,y);
+
+	pdcode = pretzel_diagr([i,j,k]);
+
+	init_diagr(pdcode,test,1);
+	
+	assignDmatrices(1);
+
+	write (
+			Str("./differentials_pr/pdcode_",i,"_",j,"_",k,"/bound"),
+
+			Str(DStore[1].iLow, " ", DStore[1].iHigh - 1, " ", DStore[1].jLow, " ", DStore[1].jHigh)
+
+		);
+
+	for (x = DStore[1].iLow,
+		DStore[1].iHigh - 1,
+		for (y = DStore[1].jLow,
+			DStore[1].jHigh,
+
+			write_pretzel_pd_all_to_file(1, x, y, i, j, k);
+
+		);
+	);
+
+	return 1;
+}
+
+
 
 /**
  * fetch differential for loaded knot generated from pdcode (at datapos), write to file

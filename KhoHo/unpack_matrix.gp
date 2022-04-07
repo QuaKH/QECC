@@ -557,3 +557,32 @@ write_pretzel_pd_all_to_file(datapos, x, y, linei, linej, linek) = {
 
 	return 1;
 }
+
+
+/**
+ * fetch differential for loaded knot generated from pdcode (at datapos), write to file
+ */
+write_pretzel_pdcode(xlow, xhigh, ylow, yhigh, zlow, zhigh) = {
+
+	local(x, y, z);
+
+	for (x = xlow, 
+		xhigh,
+		for (y = ylow,
+			yhigh,
+			for (z = zlow,
+				zhigh,
+
+				if ((x != 0) && (y != 0) && (z != 0),
+
+					pdcode = pretzel_diagr([x,y,z]);
+					write (
+						Str("./pretzel_pd_/pr_",x,"_",y,"_",z),
+						pdcode
+					),
+
+				);
+			);
+		);
+	);
+}
